@@ -181,7 +181,7 @@ body { -webkit-user-select: none; user-select: none; }
   background: var(--accent); border: none; color: #08101f;
   display: grid; place-items: center; cursor: pointer;
   box-shadow: 0 8px 24px rgba(94,143,255,.45);
-  transition: transform .12s; z-index: 2;
+  transition: transform .12s; z-index: 2; touch-action: none;
 }
 .hub svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .control-zone.open .hub { transform: scale(.9); }
@@ -189,20 +189,20 @@ body { -webkit-user-select: none; user-select: none; }
 .radial { position: absolute; inset: 0; pointer-events: none; }
 .petal {
   position: absolute; left: 50%; top: 50%;
-  width: 62px; height: 62px; margin: -31px 0 0 -31px;
+  width: 54px; height: 54px; margin: -27px 0 0 -27px;
   border-radius: 50%;
   background: var(--surface-2); border: 1px solid var(--border);
   color: var(--text); font-family: var(--sans); font-weight: 600; font-size: 12px;
   display: grid; place-items: center;
   transform: translate(0,0) scale(.2); opacity: 0;
-  transition: transform .18s cubic-bezier(.2,.9,.25,1), opacity .14s, background .12s, border-color .12s;
-  pointer-events: none;
+  transition: transform .2s cubic-bezier(.2,.9,.25,1), opacity .14s, background .12s, border-color .12s;
+  pointer-events: none; touch-action: none;
 }
-.control-zone.open .petal { opacity: 1; }
-.petal.is-targeted {
+.control-zone.open .petal { opacity: 1; transform: translate(var(--x), var(--y)) scale(1); }
+.control-zone.open .petal.is-targeted {
   background: var(--accent); border-color: var(--accent); color: #08101f;
-  transform: translate(var(--x), var(--y)) scale(1.12);
-  box-shadow: 0 6px 18px rgba(94,143,255,.5);
+  transform: translate(var(--x), var(--y)) scale(1.16);
+  box-shadow: 0 6px 20px rgba(94,143,255,.55);
 }
 
 /* ===== Drawer ===== */

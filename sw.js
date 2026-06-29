@@ -1,5 +1,5 @@
 /* Service Worker — Cache-First für Offline-Nutzung */
-var CACHE = "bjt-v1";
+var CACHE = "bjt-v2";
 var ASSETS = [
   "./",
   "./index.html",

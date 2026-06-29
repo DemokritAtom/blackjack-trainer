@@ -252,10 +252,12 @@
   var controlZone = document.getElementById("controlZone");
   var hub = document.getElementById("hub");
   var petals = Array.prototype.slice.call(document.querySelectorAll(".petal"));
-  // Winkel (math. Konvention, 0°=rechts, gegen den Uhrzeigersinn) für den oberen/linken Sektor.
-  var ANGLES = [180, 150, 120, 90, 60]; // Reihenfolge wie im DOM: surrender,split,double,stand,hit
-  var RADIUS = 96;
-  var ACTIVATE_DIST = 34;
+  // Winkel (math. Konvention, 0°=rechts, gegen den Uhrzeigersinn) im oberen/linken Sektor.
+  // Komplett zwischen 82° (fast senkrecht) und 178° (waagerecht links), damit kein Petal
+  // über den rechten Bildschirmrand klippt. Reihenfolge wie im DOM: surrender,split,double,stand,hit.
+  var ANGLES = [178, 154, 130, 106, 82];
+  var RADIUS = 128;
+  var ACTIVATE_DIST = 30;
   var dragging = false;
   var targeted = null;
 
@@ -269,18 +271,14 @@
   });
 
   function openRadial() {
+    // Positionen/Transforms macht komplett das CSS (.open / .is-targeted),
+    // damit der scale-Pop des hervorgehobenen Petals nicht von inline-Styles überschrieben wird.
     controlZone.classList.add("open");
-    petals.forEach(function (p) {
-      p.style.transform = "translate(" + p.style.getPropertyValue("--x") + "," + p.style.getPropertyValue("--y") + ") scale(1)";
-    });
   }
   function closeRadial() {
     controlZone.classList.remove("open");
     targeted = null;
-    petals.forEach(function (p) {
-      p.classList.remove("is-targeted");
-      p.style.transform = "translate(0,0) scale(.2)";
-    });
+    petals.forEach(function (p) { p.classList.remove("is-targeted"); });
   }
 
   function updateTarget(px, py) {
