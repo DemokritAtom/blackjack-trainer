@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Blackjack Trainer</title>
+  <meta name="theme-color" content="#0A0A0B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BJ Trainer" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- ===== Header ===== -->
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 21 12 12 22 3 12z"/></svg>
+        <span>Blackjack&nbsp;Trainer</span>
+      </div>
+      <button class="icon-btn" id="openStats" aria-label="Statistik">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      </button>
+    </header>
+
+    <!-- ===== Mode tabs ===== -->
+    <nav class="tabs" role="tablist">
+      <button class="tab is-active" id="tabStrategy" role="tab">Strategie</button>
+      <button class="tab" id="tabCount" role="tab">Counting</button>
+    </nav>
+
+    <!-- ===== STRATEGY MODE ===== -->
+    <section class="mode" id="modeStrategy">
+      <div class="dealer-row">
+        <span class="row-label">Dealer</span>
+        <div class="cards" id="dealerCards"></div>
+      </div>
+
+      <div class="table-felt">
+        <div class="verdict" id="verdict"></div>
+      </div>
+
+      <div class="player-row">
+        <span class="row-label">Deine Hand</span>
+        <div class="cards" id="playerCards"></div>
+        <div class="hand-meta" id="handMeta"></div>
+      </div>
+
+      <div class="ministats" id="stratMini">
+        <div class="ministat"><span class="ms-val" id="msStreak">0</span><span class="ms-key">Streak</span></div>
+        <div class="ministat"><span class="ms-val" id="msCorrect">0</span><span class="ms-key">Richtig</span></div>
+        <div class="ministat"><span class="ms-val" id="msAcc">–</span><span class="ms-key">Genau</span></div>
+      </div>
+
+      <p class="hint" id="stratHint">Hub gedrückt halten, in Richtung der Aktion ziehen, loslassen.</p>
+    </section>
+
+    <!-- ===== COUNTING MODE ===== -->
+    <section class="mode is-hidden" id="modeCount">
+      <div class="shoe-picker">
+        <span class="row-label">Schuh</span>
+        <div class="seg" id="deckSeg">
+          <button data-decks="1">1</button>
+          <button data-decks="2">2</button>
+          <button data-decks="4" class="is-active">4</button>
+          <button data-decks="6">6</button>
+        </div>
+      </div>
+
+      <div class="count-stage" id="countStage">
+        <div class="count-card" id="countCard">
+          <div class="cc-face" id="ccFace"></div>
+        </div>
+        <div class="swipe-fb" id="swipeFb"></div>
+      </div>
+
+      <div class="count-progress">
+        <span id="countProgress">0 / 0 Karten</span>
+        <span class="count-hidden" id="runHidden">RC verdeckt</span>
+      </div>
+
+      <p class="hint" id="countHint">Wischen → <b>rechts +1</b>, <b>links −1</b>, Tap = neutral &amp; nächste Karte.</p>
+
+      <div class="ministats" id="countMini">
+        <div class="ministat"><span class="ms-val" id="cmRounds">0</span><span class="ms-key">Runden</span></div>
+        <div class="ministat"><span class="ms-val" id="cmCount">0</span><span class="ms-key">RC ok</span></div>
+        <div class="ministat"><span class="ms-val" id="cmTrue">0</span><span class="ms-key">TC ok</span></div>
+      </div>
+    </section>
+
+    <!-- ===== Radial control (strategy only) ===== -->
+    <div class="control-zone" id="controlZone" aria-hidden="false">
+      <div class="radial" id="radial">
+        <button class="petal" data-action="surrender"><span>Surr</span></button>
+        <button class="petal" data-action="split"><span>Split</span></button>
+        <button class="petal" data-action="double"><span>Double</span></button>
+        <button class="petal" data-action="stand"><span>Stand</span></button>
+        <button class="petal" data-action="hit"><span>Hit</span></button>
+      </div>
+      <button class="hub" id="hub" aria-label="Aktionsmenü">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="11" height="14" rx="2"/><path d="M9 6V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-1"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== Stats drawer ===== -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>Statistik</h2>
+      <button class="icon-btn" id="closeStats" aria-label="Schließen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="stat-block">
+      <h3>Strategie</h3>
+      <dl>
+        <div><dt>Gespielt</dt><dd id="dStratTotal">0</dd></div>
+        <div><dt>Richtig</dt><dd id="dStratCorrect">0</dd></div>
+        <div><dt>Genauigkeit</dt><dd id="dStratAcc">–</dd></div>
+        <div><dt>Beste Streak</dt><dd id="dStratBest">0</dd></div>
+      </dl>
+    </div>
+
+    <div class="stat-block">
+      <h3>Counting (Hi-Lo)</h3>
+      <dl>
+        <div><dt>Runden</dt><dd id="dCountRounds">0</dd></div>
+        <div><dt>Running Count ok</dt><dd id="dCountRC">0</dd></div>
+        <div><dt>True Count ok</dt><dd id="dCountTC">0</dd></div>
+        <div><dt>Genauigkeit</dt><dd id="dCountAcc">–</dd></div>
+      </dl>
+    </div>
+
+    <button class="btn-danger" id="resetStats">Alle Statistiken zurücksetzen</button>
+  </aside>
+
+  <!-- ===== Count prompt modal ===== -->
+  <div class="modal-scrim" id="modalScrim">
+    <div class="modal" id="countModal">
+      <h3 id="modalTitle">Running Count?</h3>
+      <p class="modal-sub" id="modalSub"></p>
+      <input class="num-input" id="modalInput" type="number" inputmode="numeric" step="any" />
+      <div class="modal-result" id="modalResult"></div>
+      <button class="btn-primary" id="modalSubmit">Prüfen</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
